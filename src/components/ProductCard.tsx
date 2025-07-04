@@ -54,7 +54,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
   return (
     <>
-      <div className="w-80 h-auto bg-white rounded-lg shadow-md overflow-hidden">
+      <div className="w-56 py-4 h-auto bg-white rounded-lg shadow-md overflow-hidden">
         <img
           src={productImage}
           alt={productTitle}
@@ -64,7 +64,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             e.currentTarget.classList.add("opacity-50");
           }}
         />
-        <div className="p-4 text-center">
+        <div className="text-center">
           <h3 className="text-xl font-semibold mb-2 text-gray-900">{title}</h3>
           <p className="text-sm text-gray-700 mb-4">{description}</p>
           <div className="flex justify-center gap-2">

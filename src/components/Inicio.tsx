@@ -2,28 +2,54 @@ import React, { useState } from 'react';
 import Navbar from './Navbar';
 import "../Index.css";
 import ProductManager from './ProductManager';
+import emailjs from '@emailjs/browser';
 
 interface InicioProps {
   isAdmin: boolean;
 }
 
 const Inicio: React.FC<InicioProps> = ({ isAdmin }) => {
-  const [formData, setFormData] = useState({ name: '', email: '', cantidad: '', message: '' });
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    cantidad: '',
+    telefono: '',
+    message: '',
+  });
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    alert('Formulario enviado: ' + JSON.stringify(formData));
-    setFormData({ name: '', email: '', cantidad: '', message: '' });
+
+    emailjs
+      .send(
+        'service_1oztxla',     
+        'template_krw961k',      
+        formData,
+        'e4oJ5EXANYFS-PvA5'           
+      )
+      .then(
+        () => {
+          alert('Mensaje enviado con éxito');
+          setFormData({ name: '', email: '', cantidad: '',telefono:'', message: '' });
+        },
+        (error) => {
+          console.error('Error al enviar:', error);
+          alert('Hubo un error al enviar el mensaje');
+        }
+      );
   };
 
   return (
     <div className="min-h-screen bg-gray-100 font-sans">
       <Navbar />
+
       <section id="home" className="bg-cover bg-center h-96 flex items-center justify-center">
         <div className="container mx-auto px-4 text-center text-black">
           <h1 className="text-5xl font-bold mb-4 tracking-tight">Ladrillera Piña</h1>
@@ -116,6 +142,18 @@ const Inicio: React.FC<InicioProps> = ({ isAdmin }) => {
                   onChange={handleInputChange}
                   className="mt-1 p-2 w-full border rounded-md"
                   placeholder="1000 Ladrillos"
+                />
+              </div>
+              <div className="mt-4">
+                <label htmlFor="telefono" className="block text-sm font-medium text-gray-700">Celular</label>
+                <input
+                  type="number"
+                  id="telefono"
+                  name="telefono"
+                  value={formData.telefono}
+                  onChange={handleInputChange}
+                  className="mt-1 p-2 w-full border rounded-md"
+                  placeholder="3214569871"
                 />
               </div>
               <div className="mt-4">

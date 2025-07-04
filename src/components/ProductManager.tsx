@@ -19,10 +19,10 @@ const ProductManager: React.FC<ProductManagerProps> = ({ isAdmin }) => {
 
   const handleAddProduct = async () => {
     const newProduct: ProductData = {
-      id: Date.now(), // ✅ ID único basado en el timestamp actual
+      id: Date.now(), 
       title: "Nuevo Producto",
       description: "Descripción del producto",
-      image: "../../public/image.png",
+      image: "/public/image.png",
       additional: "Detalles adicionales"
     };
     await addProduct(newProduct);
