@@ -1,12 +1,16 @@
-// auth.ts o authService.ts
+// src/service/authService.ts
+import { auth } from "../firebase";
+import {
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged,
+  User
+} from "firebase/auth";
 
-import { User } from "firebase/auth";
+export const login = (email: string, password: string) =>
+  signInWithEmailAndPassword(auth, email, password);
 
-// Esto es solo un ejemplo básico. Idealmente deberías usar claims o una colección de roles en Firestore
-export const getRole = (user: User | null): "admin" | "user" => {
-  if (!user) return "user";
+export const logout = () => signOut(auth);
 
-  // Por ahora usamos un correo fijo como admin
-  if (user.email === "admin@ejemplo.com") return "admin";
-  return "user";
-};
+export const subscribeToAuth = (callback: (user: User | null) => void) =>
+  onAuthStateChanged(auth, callback);

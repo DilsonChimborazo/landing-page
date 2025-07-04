@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Inicio from "./components/Inicio";
 import Login from "./components/Login";
-import { signOut, onAuthStateChanged } from "firebase/auth";
-import { auth } from "./firebase";
+import { auth, onAuthStateChanged, signOut } from "./firebase"; // asegúrate de tenerlo configurado
 import "./Index.css";
 
 const App: React.FC = () => {

@@ -1,44 +1,37 @@
 import React, { useEffect, useState } from "react";
 import ProductCard, { ProductData } from "./ProductCard";
-import { getRole } from "./auth";
-import { loadProducts, saveProducts } from "../service/ProductService";
+import { fetchProducts, addProduct, updateProduct } from "../service/ProductService";
 
-interface ProductDataWithId extends ProductData {
-  id: number;
+interface ProductManagerProps {
+  isAdmin: boolean;
 }
 
-const ProductManager: React.FC = () => {
-  const [products, setProducts] = useState<ProductDataWithId[]>([]);
-  const isAdmin = getRole() === "admin";
+const ProductManager: React.FC<ProductManagerProps> = ({ isAdmin }) => {
+  const [products, setProducts] = useState<ProductData[]>([]);
 
-  // Cargar productos del localStorage al iniciar
   useEffect(() => {
-    const loaded = loadProducts();
-    setProducts(loaded);
+    const load = async () => {
+      const data = await fetchProducts();
+      setProducts(data);
+    };
+    load();
   }, []);
 
-  // Guardar productos en localStorage cada vez que cambien
-  useEffect(() => {
-    saveProducts(products);
-  }, [products]);
-
-  const getNextId = (): number => {
-    return products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1;
-  };
-
-  const handleAddProduct = () => {
-    const newProduct: ProductDataWithId = {
-      id: getNextId(),
+  const handleAddProduct = async () => {
+    const newProduct: ProductData = {
+      id: Date.now(), // ✅ ID único basado en el timestamp actual
       title: "Nuevo Producto",
       description: "Descripción del producto",
       image: "../../public/image.png",
-      additional: "Detalles adicionales",
+      additional: "Detalles adicionales"
     };
+    await addProduct(newProduct);
     setProducts([newProduct, ...products]);
   };
 
-  const handleUpdateProduct = (id: number, data: ProductData) => {
-    setProducts(products.map((p) => (p.id === id ? { ...p, ...data } : p)));
+  const handleUpdateProduct = async (id: number, data: ProductData) => {
+    await updateProduct(id, data);
+    setProducts(products.map(p => (p.id === id ? data : p)));
   };
 
   return (
@@ -57,10 +50,10 @@ const ProductManager: React.FC = () => {
       <div className="flex flex-wrap gap-6">
         {products.map((product) => (
           <ProductCard
-            key={product.id}
+            key={product.id} // 🔐 ahora será único
             {...product}
             isAdmin={isAdmin}
-            onUpdate={(id, data) => handleUpdateProduct(id, data)}
+            onUpdate={(updatedId, data) => handleUpdateProduct(updatedId, data)}
           />
         ))}
       </div>
