@@ -11,7 +11,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user?.email === "admin@ladrillera.com") {
+      if (user?.email === "dilsonchimborazoperez@gmail.com") {
         setIsAdmin(true);
       } else {
         setIsAdmin(false);
@@ -31,7 +31,7 @@ const App: React.FC = () => {
   if (checkingAuth) return <div className="text-center mt-20 text-xl">Cargando...</div>;
 
   return (
-    <div className="p-4">
+    <div className="py-2">
       <div className="flex justify-end mb-4">
         {isAdmin ? (
           <button
@@ -46,7 +46,7 @@ const App: React.FC = () => {
               className="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700"
               onClick={() => setShowLogin(true)}
             >
-              Iniciar como administrador
+              Administrador
             </button>
           )
         )}
@@ -58,8 +58,10 @@ const App: React.FC = () => {
             setIsAdmin(true);
             setShowLogin(false);
           }}
+          onClose={() => setShowLogin(false)}
         />
       )}
+
 
       <Inicio isAdmin={isAdmin} />
     </div>

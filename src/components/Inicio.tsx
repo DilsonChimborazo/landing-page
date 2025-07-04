@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from './Navbar';
 import "../Index.css";
 import ProductManager from './ProductManager';
 import emailjs from '@emailjs/browser';
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { db } from "../firebase";
 
 interface InicioProps {
   isAdmin: boolean;
@@ -17,6 +19,45 @@ const Inicio: React.FC<InicioProps> = ({ isAdmin }) => {
     message: '',
   });
 
+  const [serviciosTexto, setServiciosTexto] = useState("");
+  const [proyectosTexto, setProyectosTexto] = useState("");
+  const [blogTexto, setBlogTexto] = useState("");
+
+  useEffect(() => {
+    const fetchContent = async () => {
+      const docRef = doc(db, "contenido", "secciones");
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        setServiciosTexto(data.serviciosTexto || "");
+        setProyectosTexto(data.proyectosTexto || "");
+        setBlogTexto(data.blogTexto || "");
+      }
+    };
+
+    fetchContent();
+  }, []);
+
+  const updateContent = async (field: string, value: string) => {
+    const docRef = doc(db, "contenido", "secciones");
+    await setDoc(docRef, { [field]: value }, { merge: true });
+  };
+
+  const handleServiciosChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setServiciosTexto(e.target.value);
+    updateContent("serviciosTexto", e.target.value);
+  };
+
+  const handleProyectosChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setProyectosTexto(e.target.value);
+    updateContent("proyectosTexto", e.target.value);
+  };
+
+  const handleBlogChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setBlogTexto(e.target.value);
+    updateContent("blogTexto", e.target.value);
+  };
+
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -29,15 +70,15 @@ const Inicio: React.FC<InicioProps> = ({ isAdmin }) => {
 
     emailjs
       .send(
-        'service_1oztxla',     
-        'template_krw961k',      
+        'service_1oztxla',
+        'template_krw961k',
         formData,
-        'e4oJ5EXANYFS-PvA5'           
+        'e4oJ5EXANYFS-PvA5'
       )
       .then(
         () => {
           alert('Mensaje enviado con éxito');
-          setFormData({ name: '', email: '', cantidad: '',telefono:'', message: '' });
+          setFormData({ name: '', email: '', cantidad: '', telefono: '', message: '' });
         },
         (error) => {
           console.error('Error al enviar:', error);
@@ -78,14 +119,30 @@ const Inicio: React.FC<InicioProps> = ({ isAdmin }) => {
       <section id="services" className="py-12 bg-gray-200">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-8">Nuestros Servicios</h2>
-          <p className="text-center">Ofrecemos asesoría, distribución y soporte técnico para tus proyectos.</p>
+          {isAdmin ? (
+            <textarea
+              className="w-full p-4 border rounded-md text-center"
+              value={serviciosTexto}
+              onChange={handleServiciosChange}
+            />
+          ) : (
+            <p className="text-center">{serviciosTexto}</p>
+          )}
         </div>
       </section>
 
       <section id="projects" className="py-12 bg-gray-100">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-8">Proyectos</h2>
-          <p className="text-center">Descubre nuestras obras destacadas con ladrillos de calidad.</p>
+          {isAdmin ? (
+            <textarea
+              className="w-full p-4 border rounded-md text-center"
+              value={proyectosTexto}
+              onChange={handleProyectosChange}
+            />
+          ) : (
+            <p className="text-center">{proyectosTexto}</p>
+          )}
         </div>
       </section>
 
@@ -99,7 +156,15 @@ const Inicio: React.FC<InicioProps> = ({ isAdmin }) => {
       <section id="blog" className="py-12 bg-gray-100">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-8">Blog</h2>
-          <p className="text-center">Lee nuestros consejos y novedades sobre construcción.</p>
+          {isAdmin ? (
+            <textarea
+              className="w-full p-4 border rounded-md text-center"
+              value={blogTexto}
+              onChange={handleBlogChange}
+            />
+          ) : (
+            <p className="text-center">{blogTexto}</p>
+          )}
         </div>
       </section>
 
@@ -145,7 +210,7 @@ const Inicio: React.FC<InicioProps> = ({ isAdmin }) => {
                 />
               </div>
               <div className="mt-4">
-                <label htmlFor="telefono" className="block text-sm font-medium text-gray-700">Celular</label>
+                <label htmlFor="telefono" className="block text-sm font-medium text-gray-700">Teléfono</label>
                 <input
                   type="number"
                   id="telefono"
