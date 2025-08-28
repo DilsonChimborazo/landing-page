@@ -31,22 +31,22 @@ const App: React.FC = () => {
   if (checkingAuth) return <div className="text-center mt-20 text-xl">Cargando...</div>;
 
   return (
-    <div className="py-2">
-      <div className="flex justify-end mb-4">
+    <div className="">
+      <div className="fixed bottom-0 right-0 px-10 py-3 ">
         {isAdmin ? (
           <button
-            className="bg-red-600 text-white px-4 py-2 rounded-full hover:bg-red-700"
+            className="  px-4 py-2 font-bold"
             onClick={handleLogout}
           >
-            Cerrar sesión
+            ✅
           </button>
         ) : (
           !showLogin && (
             <button
-              className="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700"
+              className=" px-4 py-2 rounded-full font-bold hover:text-orange-600"
               onClick={() => setShowLogin(true)}
             >
-              Administrador
+              ⚙️
             </button>
           )
         )}

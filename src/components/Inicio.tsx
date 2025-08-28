@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import Navbar from './Navbar';
+import React, { useState, useEffect } from "react";
+import Navbar from "./Navbar";
 import "../Index.css";
-import ProductManager from './ProductManager';
-import emailjs from '@emailjs/browser';
+import ProductManager from "./ProductManager";
+import emailjs from "@emailjs/browser";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "../firebase";
+import { motion } from "framer-motion";
 
 interface InicioProps {
   isAdmin: boolean;
@@ -12,14 +13,13 @@ interface InicioProps {
 
 const Inicio: React.FC<InicioProps> = ({ isAdmin }) => {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    cantidad: '',
-    telefono: '',
-    message: '',
+    name: "",
+    email: "",
+    cantidad: "",
+    telefono: "",
+    message: "",
   });
 
-  const [serviciosTexto, setServiciosTexto] = useState("");
   const [proyectosTexto, setProyectosTexto] = useState("");
   const [blogTexto, setBlogTexto] = useState("");
 
@@ -29,12 +29,10 @@ const Inicio: React.FC<InicioProps> = ({ isAdmin }) => {
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         const data = docSnap.data();
-        setServiciosTexto(data.serviciosTexto || "");
         setProyectosTexto(data.proyectosTexto || "");
         setBlogTexto(data.blogTexto || "");
       }
     };
-
     fetchContent();
   }, []);
 
@@ -43,22 +41,7 @@ const Inicio: React.FC<InicioProps> = ({ isAdmin }) => {
     await setDoc(docRef, { [field]: value }, { merge: true });
   };
 
-  const handleServiciosChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setServiciosTexto(e.target.value);
-    updateContent("serviciosTexto", e.target.value);
-  };
-
-  const handleProyectosChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setProyectosTexto(e.target.value);
-    updateContent("proyectosTexto", e.target.value);
-  };
-
-  const handleBlogChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setBlogTexto(e.target.value);
-    updateContent("blogTexto", e.target.value);
-  };
-
-  const handleInputChange = (
+  const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
@@ -67,187 +50,289 @@ const Inicio: React.FC<InicioProps> = ({ isAdmin }) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
     emailjs
-      .send(
-        'service_1oztxla',
-        'template_krw961k',
-        formData,
-        'e4oJ5EXANYFS-PvA5'
-      )
+      .send("service_1oztxla", "template_krw961k", formData, "e4oJ5EXANYFS-PvA5")
       .then(
         () => {
-          alert('Mensaje enviado con éxito');
-          setFormData({ name: '', email: '', cantidad: '', telefono: '', message: '' });
+          alert("Mensaje enviado con éxito");
+          setFormData({
+            name: "",
+            email: "",
+            cantidad: "",
+            telefono: "",
+            message: "",
+          });
         },
         (error) => {
-          console.error('Error al enviar:', error);
-          alert('Hubo un error al enviar el mensaje');
+          console.error("Error:", error);
+          alert("Error al enviar mensaje");
         }
       );
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 font-sans">
+    <div className="text-white">
       <Navbar />
+      {/* HERO */}
+    <section
+      id="home"
+      className="h-[100vh] flex items-center justify-center relative overflow-hidden"
+    >
+      {/* Imagen de fondo */}
+      <div
+        className="absolute inset-0 bg-cover bg-center"
+        style={{ backgroundImage: "url('../ladrillo.jpg')" }}
+      ></div>
 
-      <section id="home" className="bg-cover bg-center h-96 flex items-center justify-center">
-        <div className="container mx-auto px-4 text-center text-black">
-          <h1 className="text-5xl font-bold mb-4 tracking-tight">Ladrillera Piña</h1>
-          <p className="text-xl mb-6 max-w-2xl mx-auto">
-            Construye tus sueños con los ladrillos más resistentes y confiables del mercado.
-          </p>
-          <a
-            href="https://wa.me/573186479724"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-block bg-orange-600 text-white font-semibold px-8 py-3 rounded-full hover:bg-orange-700 transition-colors duration-300"
+      {/* Capa oscura */}
+      <div className="absolute inset-0 bg-black/70"></div>
+
+      {/* Contenedor principal */}
+      <div className="relative z-10 max-w-5xl w-full px-6">
+        <div className=" rounded-2xl shadow-2xl flex md:flex-row ">
+          {/* Imagen al lado izquierdo */}
+          <motion.img
+            src="../image.png"
+            alt="Tecnología"
+            className="w-full md:w-1/2 object-cover"
+            initial={{ opacity: 0, x: -100 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 1 }}
+          />
+
+          {/* Texto al lado derecho */}
+          <motion.div
+            initial={{ opacity: 0, x: 100 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 1 }}
+            className="flex flex-col justify-center text-center md:text-left p-8 md:w-1/2 text-white"
           >
-            Contáctanos por WhatsApp
-          </a>
-        </div>
-      </section>
+            {/* Título con rebote */}
+            <motion.h1
+              className="text-5xl sm:text-6xl font-extrabold tracking-wider drop-shadow-lg"
+              initial={{ opacity: 0, scale: 0.8, y: -50 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{ duration: 1, ease: "easeOut", type: "spring" }}
+            >
+              LADRILLERA PIÑA
+            </motion.h1>
 
-      <section id="products" className="py-12 bg-gray-100">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-wrap gap-8 justify-center">
-            <ProductManager isAdmin={isAdmin} />
-          </div>
-        </div>
-      </section>
+            {/* Subtítulo con fade + delay */}
+            <motion.p
+              className="mt-4 text-lg sm:text-xl text-gray-200"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, delay: 0.5 }}
+            >
+              Innovación en cada ladrillo, construyendo con tecnología.
+            </motion.p>
 
-      <section id="services" className="py-12 bg-gray-200">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-8">Nuestros Servicios</h2>
-          {isAdmin ? (
-            <textarea
-              className="w-full p-4 border rounded-md text-center"
-              value={serviciosTexto}
-              onChange={handleServiciosChange}
-            />
-          ) : (
-            <p className="text-center">{serviciosTexto}</p>
-          )}
-        </div>
-      </section>
-
-      <section id="projects" className="py-12 bg-gray-100">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-8">Proyectos</h2>
-          {isAdmin ? (
-            <textarea
-              className="w-full p-4 border rounded-md text-center"
-              value={proyectosTexto}
-              onChange={handleProyectosChange}
-            />
-          ) : (
-            <p className="text-center">{proyectosTexto}</p>
-          )}
-        </div>
-      </section>
-
-      <section id="about" className="py-12 bg-gray-200">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-8">Sobre Nosotros</h2>
-          <p className="text-center">Ladrillera Piña, líder en la industria desde hace más de 20 años.</p>
-        </div>
-      </section>
-
-      <section id="blog" className="py-12 bg-gray-100">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-8">Blog</h2>
-          {isAdmin ? (
-            <textarea
-              className="w-full p-4 border rounded-md text-center"
-              value={blogTexto}
-              onChange={handleBlogChange}
-            />
-          ) : (
-            <p className="text-center">{blogTexto}</p>
-          )}
-        </div>
-      </section>
-
-      <section id="contact" className="py-12 bg-gray-200">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-8">Contáctanos</h2>
-          <div className="max-w-lg mx-auto">
-            <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md">
-              <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700">Nombre</label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  className="mt-1 p-2 w-full border rounded-md"
-                  placeholder="Tu nombre"
-                />
-              </div>
-              <div className="mt-4">
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700">Correo Electrónico</label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  className="mt-1 p-2 w-full border rounded-md"
-                  placeholder="tu@correo.com"
-                />
-              </div>
-              <div className="mt-4">
-                <label htmlFor="cantidad" className="block text-sm font-medium text-gray-700">Cantidad</label>
-                <input
-                  type="number"
-                  id="cantidad"
-                  name="cantidad"
-                  value={formData.cantidad}
-                  onChange={handleInputChange}
-                  className="mt-1 p-2 w-full border rounded-md"
-                  placeholder="1000 Ladrillos"
-                />
-              </div>
-              <div className="mt-4">
-                <label htmlFor="telefono" className="block text-sm font-medium text-gray-700">Teléfono</label>
-                <input
-                  type="number"
-                  id="telefono"
-                  name="telefono"
-                  value={formData.telefono}
-                  onChange={handleInputChange}
-                  className="mt-1 p-2 w-full border rounded-md"
-                  placeholder="3214569871"
-                />
-              </div>
-              <div className="mt-4">
-                <label htmlFor="message" className="block text-sm font-medium text-gray-700">Mensaje</label>
-                <textarea
-                  id="message"
-                  name="message"
-                  value={formData.message}
-                  onChange={handleInputChange}
-                  className="mt-1 p-2 w-full border rounded-md"
-                  rows={4}
-                  placeholder="Tu mensaje"
-                ></textarea>
-              </div>
-              <button
-                type="submit"
-                className="mt-6 bg-orange-600 text-white px-6 py-2 rounded-full hover:bg-orange-700"
+            {/* Botones con animación escalada secuencial */}
+            <motion.div
+              className="mt-6 flex gap-4 justify-center md:justify-start"
+              initial="hidden"
+              animate="visible"
+              variants={{
+                hidden: {},
+                visible: {
+                  transition: { staggerChildren: 0.3 }, // animación uno tras otro
+                },
+              }}
+            >
+              <motion.a
+                href="#products"
+                className="px-6 py-3 rounded-full border border-white/50 hover:bg-white hover:text-black transition text-lg font-medium"
+                variants={{
+                  hidden: { opacity: 0, scale: 0.8 },
+                  visible: { opacity: 1, scale: 1 },
+                }}
+                transition={{ duration: 0.8, type: "spring" }}
               >
-                Enviar
-              </button>
-            </form>
+                Ver Más
+              </motion.a>
+              <motion.a
+                href="#contact"
+                className="px-6 py-3 rounded-full bg-orange-600 hover:bg-orange-700 transition text-lg font-medium"
+                variants={{
+                  hidden: { opacity: 0, scale: 0.8 },
+                  visible: { opacity: 1, scale: 1 },
+                }}
+                transition={{ duration: 0.8, type: "spring", delay: 0.2 }}
+              >
+                Contáctanos
+              </motion.a>
+            </motion.div>
+          </motion.div>
+        </div>
+      </div>
+    </section>
+
+
+      {/* PRODUCTOS */}
+      <section
+        id="products"
+        className="py-20 bg-gradient-to-b from-black via-gray-900 to-black"
+      >
+        <div className="container mx-auto px-4">
+          <h2 className="text-4xl font-bold text-center mb-12 text-white drop-shadow-lg">
+            Nuestros Productos
+          </h2>
+          <ProductManager isAdmin={isAdmin} />
+        </div>
+      </section>
+
+      {/* SERVICIOS */}
+      <section id="services" className="py-20 bg-[#F5F5F5]">
+        <div className="container mx-auto px-4">
+          <h2 className="text-4xl font-bold mb-8 text-center text-[#D35400]">
+            Nuestros Servicios
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+            {/* Columna de texto animada */}
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+              className="bg-[#F5F5F5] text-gray-800 rounded-3xl "
+            >
+              Nos especializamos en la fabricación de ladrillo tolete de alta calidad, producido bajo procesos controlados que garantizan resistencia mecánica, uniformidad dimensional y óptimas propiedades térmicas y acústicas. <br /> <br />
+
+              Nuestro producto es ideal para muros estructurales y no estructurales, brindando excelente adherencia en la mampostería y una apariencia estética uniforme. <br /> <br />
+
+              ✅ Características técnicas: <br />
+
+              - Dimensiones estándar según requerimiento del cliente. <br />
+
+              -Alta resistencia a la compresión. <br /> 
+
+              -Acabado homogéneo para un mejor desempeño en obra. <br /> 
+
+              -Fabricación con materias primas seleccionadas. <br /> 
+
+              -Cumplimiento con parámetros de calidad establecidos en normas nacionales. <br />  <br />
+
+              ⚠️ Importante: Nuestro servicio se centra exclusivamente en la producción del ladrillo. No realizamos transporte, ni entrega en obra. El material se entrega en planta para su respectivo retiro por parte del cliente
+            </motion.div>
+
+            {/* Columna del mapa */}
+            <div className="w-full h-96 rounded-xl overflow-hidden shadow-lg border-2 border-[#D35400]">
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3987.7710486999567!2d-76.0746285251953!3d1.8355548981476537!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e250b2521765fcb%3A0xf3de3d0a4eb2c3a1!2sFinca%20Recreativa%20el%20Portal%20de%20Rafa!5e0!3m2!1ses!2sco!4v1756335484291!5m2!1ses!2sco"
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                allowFullScreen={true}
+                loading="lazy"
+              ></iframe>
+            </div>
           </div>
         </div>
       </section>
 
-      <footer className="bg-orange-600 text-white py-4">
+
+
+      {/* PROYECTOS */}
+      <section id="projects" className="py-20 bg-black/60">
         <div className="container mx-auto px-4 text-center">
-          <p>© 2025 Ladrillera Piña. Todos los derechos reservados.</p>
+          <h2 className="text-4xl font-bold mb-8">Proyectos</h2>
+          {isAdmin ? (
+            <textarea
+              value={proyectosTexto}
+              onChange={(e) => {
+                setProyectosTexto(e.target.value);
+                updateContent("proyectosTexto", e.target.value);
+              }}
+              className="w-full p-4 rounded-xl bg-white/10 border border-white/20 backdrop-blur-lg text-white"
+            />
+          ) : (
+            <p className="max-w-3xl mx-auto">{proyectosTexto}</p>
+          )}
         </div>
+      </section>
+
+      {/* BLOG */}
+      <section id="blog" className="py-20 bg-black">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-4xl font-bold mb-8">Blog</h2>
+          {isAdmin ? (
+            <textarea
+              value={blogTexto}
+              onChange={(e) => {
+                setBlogTexto(e.target.value);
+                updateContent("blogTexto", e.target.value);
+              }}
+              className="w-full p-4 rounded-xl bg-white/10 border border-white/20 backdrop-blur-lg text-white"
+            />
+          ) : (
+            <p className="max-w-3xl mx-auto">{blogTexto}</p>
+          )}
+        </div>
+      </section>
+
+      {/* CONTACTO */}
+      <section id="contact" className="py-20 bg-black/70">
+        <div className="container mx-auto px-4">
+          <h2 className="text-4xl font-bold text-center mb-10">Contáctanos</h2>
+          <form
+            onSubmit={handleSubmit}
+            className="max-w-lg mx-auto bg-white/10 backdrop-blur-lg p-8 rounded-2xl border border-white/20 space-y-4"
+          >
+            <input
+              type="text"
+              name="name"
+              placeholder="Tu Nombre"
+              value={formData.name}
+              onChange={handleChange}
+              className="w-full p-3 rounded-lg bg-transparent border border-white/30 text-white"
+            />
+            <input
+              type="email"
+              name="email"
+              placeholder="Tu Correo"
+              value={formData.email}
+              onChange={handleChange}
+              className="w-full p-3 rounded-lg bg-transparent border border-white/30 text-white"
+            />
+            <input
+              type="number"
+              name="cantidad"
+              placeholder="Cantidad"
+              value={formData.cantidad}
+              onChange={handleChange}
+              className="w-full p-3 rounded-lg bg-transparent border border-white/30 text-white"
+            />
+            <input
+              type="number"
+              name="telefono"
+              placeholder="Teléfono"
+              value={formData.telefono}
+              onChange={handleChange}
+              className="w-full p-3 rounded-lg bg-transparent border border-white/30 text-white"
+            />
+            <textarea
+              name="message"
+              placeholder="Mensaje"
+              value={formData.message}
+              onChange={handleChange}
+              rows={4}
+              className="w-full p-3 rounded-lg bg-transparent border border-white/30 text-white"
+            ></textarea>
+            <button
+              type="submit"
+              className="w-full py-3 rounded-full bg-gradient-to-r from-orange-500 to-red-600 hover:opacity-90 transition text-white font-semibold"
+            >
+              Enviar
+            </button>
+          </form>
+        </div>
+      </section>
+
+      {/* FOOTER */}
+      <footer className="bg-white py-6 text-center border-t border-white/20">
+        <p className="text-black font-bold text-lg">
+          © 2025 LADRILLERA PIÑA. Todos los derechos reservados.
+        </p>
       </footer>
     </div>
   );

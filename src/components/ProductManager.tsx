@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Autoplay, EffectCoverflow } from "swiper/modules";
+import { Navigation, EffectCoverflow } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/effect-coverflow";
@@ -44,7 +44,7 @@ const ProductManager: React.FC<ProductManagerProps> = ({ isAdmin }) => {
       {isAdmin && (
         <div className="mb-4 flex justify-end">
           <button
-            className="bg-green-600 text-white px-3 py-1 sm:px-4 sm:py-2 rounded-full hover:bg-green-700 transition-colors text-xs sm:text-sm"
+            className="bg-gradient-to-r from-orange-500 to-red-600 text-white px-4 py-2 rounded-full shadow hover:shadow-lg transition"
             onClick={handleAddProduct}
           >
             Agregar Producto
@@ -52,7 +52,7 @@ const ProductManager: React.FC<ProductManagerProps> = ({ isAdmin }) => {
         </div>
       )}
       <Swiper
-        modules={[Navigation, Autoplay, EffectCoverflow]}
+        modules={[Navigation, EffectCoverflow]}
         spaceBetween={30}
         slidesPerView={3}
         effect="coverflow"
@@ -64,6 +64,7 @@ const ProductManager: React.FC<ProductManagerProps> = ({ isAdmin }) => {
           slideShadows: false,
         }}
         navigation
+        autoplay={{ delay: 3000 }}
         className="w-full"
       >
         {products.map((product) => (

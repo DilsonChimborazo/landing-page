@@ -1,60 +1,35 @@
-import React, { useState } from 'react';
+import React from "react";
 
-const Navbar: React.FC = () => {
-  const [menuOpen, setMenuOpen] = useState(false);
+interface NavbarProps {
+  onLoginClick?: () => void;
+}
 
-  const navItems = [
-    { name: 'Inicio', href: '#home' },
-    { name: 'Productos', href: '#products' },
-    { name: 'Servicios', href: '#services' },
-    { name: 'Proyectos', href: '#projects' },
-    { name: 'Nosotros', href: '#about' },
-    { name: 'Blog', href: '#blog' },
-    { name: 'Contacto', href: '#contact' },
-  ];
-
+const Navbar: React.FC<NavbarProps> = ({ onLoginClick }) => {
   return (
-    <header className="bg-orange-600 text-white shadow-md sticky top-0 z-50">
-      <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Ladrillera Piña</h1>
-
-        {/* Botón hamburguesa */}
-        <button
-          className="sm:hidden text-white text-2xl focus:outline-none"
-          onClick={() => setMenuOpen(!menuOpen)}
-        >
-          ☰
-        </button>
-
-        {/* Menú en pantallas grandes */}
-        <nav className="hidden sm:flex gap-4">
-          {navItems.map((item) => (
-            <a
-              key={item.name}
-              href={item.href}
-              className="text-sm sm:text-base hover:underline hover:text-yellow-300 transition-colors duration-200"
+  <nav className="fixed top-0 w-full bg-gradient-to-b from-black via-gray-900 to-transparent text-white  z-50">
+    <div className="container mx-auto flex items-center justify-between px-6 py-6">
+      <h1 className="text-white text-2xl font-extrabold tracking-wide">
+        LADRILLERA<span className="text-orange-500">PIÑA</span>
+      </h1>
+      <ul className="flex space-x-8 text-white font-medium">
+        <li className="hover:text-orange-500 transition cursor-pointer"><a href="#home">Inicio</a></li>
+        <li className="hover:text-orange-500 transition cursor-pointer"><a href="#products">Productos</a></li>
+        <li className="hover:text-orange-500 transition cursor-pointer"><a href="#projects">Proyectos</a></li>
+        <li className="hover:text-orange-500 transition cursor-pointer"><a href="#contact">Contacto</a></li>
+        {onLoginClick && (
+          <li>
+            <button
+              onClick={onLoginClick}
+              className="ml-6 px-4 py-2 rounded-full border border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white transition duration-300"
             >
-              {item.name}
-            </a>
-          ))}
-        </nav>
-      </div>
+              Admin
+            </button>
+          </li>
+        )}
+      </ul>
+    </div>
+  </nav>
 
-      {/* Menú en pantallas pequeñas */}
-      {menuOpen && (
-        <div className="sm:hidden px-4 pb-4">
-          {navItems.map((item) => (
-            <a
-              key={item.name}
-              href={item.href}
-              className="block py-2 border-b border-white text-sm hover:text-yellow-300"
-            >
-              {item.name}
-            </a>
-          ))}
-        </div>
-      )}
-    </header>
   );
 };
 
